@@ -2,8 +2,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import nodemailer from "nodemailer";
 
 const allowedOrigins = [
+  "https://nandnretail.com",
   "https://nlk.thesocialants.com",
-  "https://nandnretail.com/"
 ];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // Handle preflight requests
+  // Handle preflight request
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
@@ -48,6 +48,7 @@ Message: ${message}
     });
     res.status(200).json({ success: true });
   } catch (err) {
+    console.error(err);
     res.status(500).json({ error: "Failed to send email." });
   }
 }
