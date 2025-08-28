@@ -34,6 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   });
 
   try {
+    // Send email
     await transporter.sendMail({
       from: `"N&N Retails Contact" <${process.env.GMAIL_USER}>`,
       to: process.env.GMAIL_USER,
@@ -46,9 +47,17 @@ Subject: ${subject}
 Message: ${message}
       `,
     });
+
+    // Forward to Google Sheets
+    await fetch("https://script.google.com/macros/s/AKfycbytrrc6JL9MJmcDEg6URS6_xiHiDMY4OsorgQfR9-k9uCBevUp6DS7Ylwmc7kx9J9BP7A/exec", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name, email, phone, subject, message }),
+    });
+
     res.status(200).json({ success: true });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: "Failed to send email." });
+    res.status(500).json({ error: "Failed to send email or log to sheet." });
   }
 }
